@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PD411_Books.API/PD411_Books.API.csproj" />
+  <Project Path="PD411_Books.BLL/PD411_Books.BLL.csproj" />
+  <Project Path="PD411_Books.DAL/PD411_Books.DAL.csproj" />
+</Solution>

@@ -1,0 +1,6 @@
+@PD411_Books.API_HostAddress = http://localhost:5216
+
+GET {{PD411_Books.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
