@@ -8,15 +8,12 @@ namespace PD411_Books.BLL.MapperProfiles
     {
         public BookMapperProfile()
         {
-            // BookEntity -> BookDto
             CreateMap<BookEntity, BookDto>();
 
-            // CreateBookDto -> BookEntity
             CreateMap<CreateBookDto, BookEntity>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.Genres, opt => opt.Ignore());
 
-            // UpdateBookDto -> BookEntity
             CreateMap<UpdateBookDto, BookEntity>()
                 .ForMember(dest => dest.Image, opt => opt.Ignore())
                 .ForMember(dest => dest.Genres, opt => opt.Ignore());
