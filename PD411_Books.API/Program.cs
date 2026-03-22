@@ -1,12 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using PD411_Books.API.Middleware;
+using Serilog;
 using PD411_Books.API.Settings;
 using PD411_Books.BLL.Services;
 using PD411_Books.DAL;
 using PD411_Books.DAL.Initializer;
 using PD411_Books.DAL.Repositories;
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add repositories
 builder.Services.AddScoped<AuthorRepository>();
@@ -61,6 +69,7 @@ if (app.Environment.IsDevelopment())
 
 // CORS - ���������� ������ ������ ������ �� ��� ���
 app.UseCors(corsName);
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -99,6 +108,10 @@ app.MapControllers();
 app.SeedAsync().Wait();
 
 app.Run();
+
+
+
+
 
 
 

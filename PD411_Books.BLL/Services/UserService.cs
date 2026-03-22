@@ -77,6 +77,7 @@ namespace PD411_Books.BLL.Services
         public async Task<ServiceResponse> LoginAsync(LoginDto dto)
         {
             var user = await _userRepository.GetAll()
+                .Include(u => u.Roles)
                 .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (user == null)
@@ -172,12 +173,14 @@ namespace PD411_Books.BLL.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var roleClaims = user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)).ToList();
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
-            };
+            }.Concat(roleClaims);
 
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
