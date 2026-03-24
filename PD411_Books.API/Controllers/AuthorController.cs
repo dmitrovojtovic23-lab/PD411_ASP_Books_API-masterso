@@ -2,6 +2,7 @@
 using PD411_Books.API.Extensions;
 using PD411_Books.API.Settings;
 using PD411_Books.BLL.Dtos.Author;
+using PD411_Books.BLL.Dtos.Common;
 using PD411_Books.BLL.Services;
 
 namespace PD411_Books.API.Controllers
@@ -22,9 +23,9 @@ namespace PD411_Books.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination)
         {
-            var response = await _authorService.GetAllAsync();
+            var response = await _authorService.GetAllAsync(pagination);
             return this.GetAction(response);
         }
 

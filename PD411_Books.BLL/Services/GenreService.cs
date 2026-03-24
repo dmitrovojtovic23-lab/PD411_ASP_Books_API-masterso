@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Genre;
+using PD411_Books.BLL.Dtos.Common;
 using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Repositories;
 
@@ -194,14 +195,34 @@ namespace PD411_Books.BLL.Services
             };
         }
 
-        public async Task<ServiceResponse> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination)
         {
-            var entities = await _genreRepository.Genres.ToListAsync();
+            var query = _genreRepository.Genres;
+
+            var totalCount = await query.CountAsync();
+
+            var entities = await query
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
             var dtos = _mapper.Map<List<GenreDto>>(entities);
+
+            var paginatedResponse = new PaginatedResponseDto<GenreDto>
+            {
+                Data = dtos,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize,
+                TotalCount = totalCount,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pagination.PageSize),
+                HasNextPage = pagination.Page * pagination.PageSize < totalCount,
+                HasPreviousPage = pagination.Page > 1
+            };
+
             return new ServiceResponse
             {
                 Message = "Жанри отримано",
-                Payload = dtos
+                Payload = paginatedResponse
             };
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PD411_Books.API.Extensions;
+using PD411_Books.BLL.Dtos.Common;
 using PD411_Books.BLL.Dtos.Genre;
 using PD411_Books.BLL.Services;
 using System.Xml.Linq;
@@ -18,9 +19,9 @@ namespace PD411_Books.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDto pagination)
         {
-            var response = await _genreService.GetAllAsync();
+            var response = await _genreService.GetAllAsync(pagination);
             return this.GetAction(response);
         }
 

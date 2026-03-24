@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PD411_Books.BLL.Dtos.Author;
+using PD411_Books.BLL.Dtos.Common;
 using PD411_Books.DAL.Entities;
 using PD411_Books.DAL.Repositories;
 
@@ -172,15 +173,34 @@ namespace PD411_Books.BLL.Services
             };
         }
 
-        public async Task<ServiceResponse> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync(PaginationDto pagination)
         {
-            var entities = await _authorRepository.Authors.ToListAsync();
+            var query = _authorRepository.Authors;
+
+            var totalCount = await query.CountAsync();
+
+            var entities = await query
+                .Skip((pagination.Page - 1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToListAsync();
+
             var dtos = _mapper.Map<List<AuthorDto>>(entities);
 
-            return new ServiceResponse 
+            var paginatedResponse = new PaginatedResponseDto<AuthorDto>
+            {
+                Data = dtos,
+                Page = pagination.Page,
+                PageSize = pagination.PageSize,
+                TotalCount = totalCount,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pagination.PageSize),
+                HasNextPage = pagination.Page * pagination.PageSize < totalCount,
+                HasPreviousPage = pagination.Page > 1
+            };
+
+            return new ServiceResponse
             {
                 Message = "Автори отримано",
-                Payload = dtos
+                Payload = paginatedResponse
             };
         }
     }
