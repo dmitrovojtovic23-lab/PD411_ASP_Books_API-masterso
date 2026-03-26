@@ -16,5 +16,6 @@ namespace PD411_Books.DAL.Entities
         public string? EmailConfirmationToken { get; set; }
         public DateTime? EmailConfirmationSent { get; set; }
         public List<RoleEntity> Roles { get; set; } = [];
+        public List<RefreshTokenEntity> RefreshTokens { get; set; } = [];
     }
 }
